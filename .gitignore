@@ -1,0 +1,5 @@
+.venv
+synthesized_rtl
+.original_testbenches
+.synth_rtl
+__pycache__
