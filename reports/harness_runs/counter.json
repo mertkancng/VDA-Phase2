@@ -1,0 +1,17 @@
+{
+  "problem_name": "counter",
+  "benchmark": "visible_problems",
+  "module_family": "sequential",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_11.v"
+  ],
+  "status": "selective",
+  "notes": "The generated reference-model-based testbench isolates a single candidate mutant."
+}

@@ -1,0 +1,17 @@
+{
+  "problem_name": "shift_right",
+  "benchmark": "visible_problems",
+  "module_family": "combinational",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_9.v"
+  ],
+  "status": "selective",
+  "notes": "The targeted distinguishing vector and reference comparison isolate a single candidate mutant."
+}

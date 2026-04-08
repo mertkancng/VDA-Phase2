@@ -1,0 +1,17 @@
+{
+  "problem_name": "enc_bin2onehot",
+  "benchmark": "visible_problems",
+  "module_family": "combinational",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_27.v"
+  ],
+  "status": "selective",
+  "notes": "The one-hot functional checks isolate a single candidate mutant."
+}

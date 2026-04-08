@@ -1,0 +1,17 @@
+{
+  "problem_name": "enc_bin2gray",
+  "benchmark": "visible_problems",
+  "module_family": "combinational",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_25.v"
+  ],
+  "status": "selective",
+  "notes": "The combinational reference comparison isolates a single candidate mutant."
+}

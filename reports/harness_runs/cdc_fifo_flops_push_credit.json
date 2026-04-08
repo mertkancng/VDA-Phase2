@@ -1,0 +1,34 @@
+{
+  "problem_name": "cdc_fifo_flops_push_credit",
+  "benchmark": "visible_problems",
+  "module_family": "cdc_fifo",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 18,
+  "passing_mutants": [
+    "mutant_0.v",
+    "mutant_10.v",
+    "mutant_12.v",
+    "mutant_13.v",
+    "mutant_14.v",
+    "mutant_17.v",
+    "mutant_19.v",
+    "mutant_20.v",
+    "mutant_24.v",
+    "mutant_26.v",
+    "mutant_28.v",
+    "mutant_29.v",
+    "mutant_30.v",
+    "mutant_4.v",
+    "mutant_6.v",
+    "mutant_7.v",
+    "mutant_8.v",
+    "mutant_9.v"
+  ],
+  "status": "partial",
+  "notes": "This is the weakest visible problem. The generated CDC/FIFO testbench improved selectivity substantially but did not isolate a single passing mutant."
+}

@@ -1,0 +1,17 @@
+{
+  "problem_name": "credit_receiver",
+  "benchmark": "visible_problems",
+  "module_family": "flow_control",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_18.v"
+  ],
+  "status": "selective",
+  "notes": "The directed credit and reset scenarios isolate a single candidate mutant."
+}

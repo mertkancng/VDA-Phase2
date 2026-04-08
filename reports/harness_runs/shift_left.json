@@ -1,0 +1,17 @@
+{
+  "problem_name": "shift_left",
+  "benchmark": "visible_problems",
+  "module_family": "combinational",
+  "toolchain": {
+    "compiler": "iverilog",
+    "simulator": "vvp"
+  },
+  "testbench_module": "tb",
+  "pass_string": "TESTS PASSED",
+  "passing_mutants_count": 1,
+  "passing_mutants": [
+    "mutant_1.v"
+  ],
+  "status": "selective",
+  "notes": "The symbol-wise barrel-shift checks isolate a single candidate mutant."
+}
