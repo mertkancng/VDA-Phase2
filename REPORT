@@ -1,0 +1,144 @@
+# VLSI Design Automation Phase 2 Report
+
+**Mini Project 2 – Agents for Chip Design Automation**  
+**Topic 2: AI for Design Verification (Google Track)**
+
+**Project Title:** Benchmark-Style Testbench Generation for RTL Verification  
+**Team:** Team DesignEEErs  
+**Members:** Arda Suhedar, Mertkan Riza Yulu
+
+## Repository Map
+
+This report is aligned with the main repository structure:
+
+- `README.md` — setup instructions, exact commands, reproducibility notes
+- `test_harness/agent.py` — main benchmark-style testbench generation logic
+- `test_harness/generate_testbenches.py` — generates `tb.v` files for problem folders
+- `test_harness/run_evaluation.py` — compiles and simulates generated testbenches
+- `scripts/run_pipeline.sh` — single entry-point script for the pipeline
+- `reports/harness_runs_summary.md` — summary of visible benchmark results
+- `reports/harness_runs/` — per-problem JSON result files
+
+## 1. Methodology & Problem Definition
+
+This project addresses Topic 2: AI for Design Verification (Google Track). In this task, the system receives a natural-language RTL specification together with multiple RTL implementations of the same design. Only one implementation is correct, while the others are incorrect mutants.
+
+The goal is to generate a complete Verilog testbench that passes for the correct RTL implementation and rejects as many incorrect mutants as possible. The generated testbench is evaluated using `iverilog` and `vvp`.
+
+Our approach is based on a benchmark-style verification workflow. The system reads the problem specification, parses the RTL interface, generates a problem-specific `tb.v`, and evaluates that testbench across all RTL candidates. The main challenge is not only to produce a syntactically valid testbench, but also to make it discriminative enough to isolate the correct implementation from the incorrect ones.
+
+The final workflow is designed to be automated and reproducible through a single entry-point script, which matches the Phase 2 submission requirement.  [oai_citation:0‡Phase 2 Submission.pdf](sediment://file_00000000e37c71f78977dd1696bb757e)
+
+## 2. Agent Architecture
+
+Our Phase 2 prototype uses a benchmark-style agent workflow with four main components.
+
+First, `test_harness/agent.py` contains the main generation logic. It reads the files in a problem folder, infers the problem family from the specification text, parses the module interface from an RTL mutant, and generates a complete Verilog testbench.
+
+Second, `test_harness/generate_testbenches.py` applies the agent to one problem folder or a collection of problem folders and writes the resulting `tb.v` file.
+
+Third, `test_harness/run_evaluation.py` evaluates the generated testbench by compiling it together with each mutant using `iverilog`, then running simulation with `vvp`, and finally computing per-problem pass/fail statistics.
+
+Finally, `scripts/run_pipeline.sh` acts as the single entry point of the system. It connects generation and evaluation into one automated command.
+
+This architecture differs from simple one-shot prompting. The final workflow is not just a single model output. Instead, it is a structured pipeline with generation, execution, result checking, and iterative refinement of family-specific handlers.
+
+## 3. Tools & Frameworks
+
+The main tools used in this project are Python, Icarus Verilog, Codex, shell scripts, and GitHub.
+
+Python is used to implement the benchmark-style harness, including generation and evaluation logic. Icarus Verilog (`iverilog` and `vvp`) is used to compile and simulate generated testbenches against RTL mutants. Codex was used during development to help design, revise, and debug the generation logic and family-specific testbench templates. Shell scripts provide a single-command interface for reproducible execution. GitHub is used for version control, collaboration, and final submission.
+
+The repository also uses lightweight Python dependencies for command-line handling and timeout control, but the core logic remains intentionally simple and easy to inspect.
+
+## 4. Context Engineering
+
+The agent uses two main sources of context: the natural-language specification and the RTL interface description.
+
+For each problem, the benchmark folder contains a `specification.md` file and multiple `mutant_*.v` files. The specification provides the intended behavior, while the RTL files provide the actual module name, signal directions, and bit widths. The agent uses the specification text to infer the problem family and parses the first mutant to recover the DUT interface.
+
+This design keeps the context compact and relevant. Instead of relying on a large global prompt, the workflow only uses the files that belong to the current problem. The generated testbench is also required to follow fixed harness conventions, such as module name `tb`, explicit success output through `TESTS PASSED`, and termination with `$finish`.
+
+The benchmark repository is treated as an external dataset. Our repository contains the agent workflow, scripts, and result summaries, while the benchmark files themselves are only read, not modified.
+
+## 5. Interaction with EDA Tools
+
+EDA interaction is handled automatically through Python and shell-based scripts.
+
+For each generated testbench, the evaluation script invokes `iverilog` to compile the testbench together with one RTL mutant. The compiled design is then executed with `vvp`. A mutant is considered passing only if compilation succeeds, simulation completes successfully, and the simulator output contains the exact success string `TESTS PASSED`.
+
+This exact pass criterion is important because simulator exit codes alone are not always enough to identify correct verification behavior. During development, aligning the evaluator with the benchmark-style success condition was one of the key implementation steps.
+
+The overall workflow is iterative. When a generated testbench is too weak and allows many mutants to pass, or too strict and rejects all candidates, the corresponding family-specific generator in `test_harness/agent.py` is revised and the evaluation is rerun.
+
+## 6. Prototype Implementation
+
+The current prototype is functional and supports all visible Google Track problem families. The main implementation entry point is the `generate_testbench(file_name_to_content)` function in `test_harness/agent.py`.
+
+The current agent is mainly rule-based. It reads the problem specification, classifies the problem into a known family, parses the RTL interface, and generates a family-specific Verilog testbench. At the time of Phase 2 submission, the harness supports the following visible problem families:
+
+- `enc_bin2gray`
+- `enc_bin2onehot`
+- `ecc_sed_encoder`
+- `shift_left`
+- `shift_right`
+- `counter`
+- `lfsr`
+- `credit_receiver`
+- `fifo_flops`
+- `cdc_fifo_flops_push_credit`
+
+Generation and evaluation now work across all visible problem families, and recent local runs completed without compile failures. However, the discrimination strength is not uniform across all families. The best results are obtained on structured combinational modules and several well-behaved sequential designs, while harder protocol-oriented problems remain less reliable.
+
+## 7. Initial Results
+
+We evaluated the final harness on all visible Google Track problem families. The strongest results were obtained on the following problems, where the generated testbench isolated exactly one passing mutant out of 31:
+
+- `counter`
+- `ecc_sed_encoder`
+- `enc_bin2gray`
+- `enc_bin2onehot`
+- `fifo_flops`
+- `shift_right`
+
+The prototype also showed partial success on:
+
+- `lfsr` — 2 passing mutants
+- `shift_left` — 2 passing mutants
+
+The remaining difficult cases were:
+
+- `credit_receiver` — 0 passing mutants in the latest run
+- `cdc_fifo_flops_push_credit` — 0 passing mutants in the latest run
+
+These results show that the current harness is already effective for most visible benchmark families, especially for clearly structured combinational modules and some sequential or FIFO-style designs. At the same time, the weaker cases show that the current family-specific templates are still sensitive to protocol timing assumptions and synchronization details.
+
+The most complete per-problem summary is recorded in `reports/harness_runs_summary.md`, while detailed JSON outputs are stored under `reports/harness_runs/`.
+
+## 8. AI Usage & Insights
+
+AI played an important role in this project, but it was not used as a fully autonomous solution. Instead, it was used as a practical assistant inside an iterative engineering workflow.
+
+Codex was helpful in several stages of development. It supported the design of the benchmark-style agent structure, improvements to family-specific testbench generators, debugging of evaluator behavior, and analysis of cases where some problem families were either too weakly discriminative or too strict. It was particularly useful for proposing additional directed tests, identifying missing edge cases, and suggesting refinements after simulation results were reviewed.
+
+At the same time, AI was not sufficient on its own. Some generated testbenches were initially too weak and allowed too many mutants to pass, while others became too strict and rejected the correct implementation as well. This was most visible in harder protocol-oriented designs, especially CDC and credit-based modules. In such cases, manual inspection and targeted refinement were still necessary.
+
+Our main insight is that AI is most effective when used inside a structured verification loop: generate, simulate, inspect results, refine, and rerun. It was much less reliable when treated as a one-shot source of a final correct verification solution.
+
+## 9. Challenges, Limitations, Improvements
+
+One of the main challenges in this project was balancing correctness and discrimination strength. Some generated testbenches were too weak and allowed many mutants to pass, while others became too strict and rejected all candidates. This showed that automatic testbench generation is not only a code generation problem, but also a specification interpretation problem.
+
+Another challenge came from the structure of the benchmark itself. The mutant RTL files are often difficult to read and resemble synthesized or low-level netlists, which makes direct reasoning harder. In addition, protocol-oriented modules such as FIFO, credit-based, and CDC designs are much more difficult to verify with short directed templates.
+
+The current prototype also has clear limitations. It is still mainly rule-based, and much of its strength comes from recognized problem families and handwritten generation logic. This limits generalization, especially for hidden or more weakly specified problems. In the latest visible runs, CDC and credit-based designs remained the weakest families.
+
+For Phase 3, we would like to improve protocol-aware test generation, make family inference more robust, and reduce dependence on fixed templates. A stronger version could also include coverage-driven generation, constrained-random exploration, or simulation-guided refinement.
+
+## 10. Conclusion
+
+This project delivers a working benchmark-style testbench generation agent for the Google Track verification task. The system reads a natural-language specification, generates a complete Verilog testbench, and evaluates that testbench against multiple RTL mutants using `iverilog` and `vvp`.
+
+The final prototype supports all visible problem families and achieves strong single-pass discrimination on most of them. While the hardest protocol-oriented families are not yet fully solved, the overall Phase 2 workflow is complete, automated, and reproducible.
+
+Overall, the project shows that AI-assisted testbench generation is already practical for several structured verification tasks, especially when it is combined with a clear execution pipeline, explicit simulation feedback, and human-guided refinement.
