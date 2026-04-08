@@ -44,29 +44,6 @@ module tb;
         end
     endtask
 
-    reg model_push_credit;
-    reg model_available;
-
-    task check_comb;
-        begin
-            #1;
-            model_available = credit_available;
-            if (rst || push_sender_in_reset)
-                model_push_credit = 1'b0;
-            else
-                model_push_credit = (~push_credit_stall) & model_available;
-            expect1(push_receiver_in_reset === rst);
-            expect1(pop_data === push_data);
-            expect1(pop_valid === (push_valid & ~(rst | push_sender_in_reset)));
-            if (rst || push_sender_in_reset)
-                expect1(push_credit === 1'b0);
-            else if (push_credit_stall)
-                expect1(push_credit === 1'b0);
-            else
-                expect1(push_credit === model_push_credit);
-        end
-    endtask
-
     initial clk = 0;
     always #5 clk = ~clk;
 
@@ -75,46 +52,65 @@ module tb;
         rst = 1;
         push_sender_in_reset = 0;
         push_credit_stall = 0;
-        push_valid = 0;
+        push_valid = 1;
         pop_credit = 0;
         credit_initial = 0;
         credit_withhold = 0;
-        push_data = 8'h3C;
+        push_data = 8'h00;
+        #1;
+        expect1(push_receiver_in_reset === 1'b1);
+        expect1(pop_valid === 1'b0);
+        expect1(push_credit === 1'b0);
         @(posedge clk);
-        check_comb();
-        expect1(credit_available === credit_count);
+        #1;
+        expect1(credit_count === 1'b0);
+        expect1(credit_available === 1'b0);
         rst = 0;
-        push_valid = 1;
-        push_data = 8'hA5;
-        check_comb();
-        @(posedge clk);
-        check_comb();
-        expect1(credit_available === credit_count);
+        #1;
+        expect1(push_receiver_in_reset === 1'b0);
+        expect1(pop_valid === 1'b1);
+        expect1(pop_data === 8'h00);
+        expect1(push_credit === 1'b0);
         push_credit_stall = 1;
+        push_valid = 0;
         pop_credit = 1;
-        check_comb();
+        push_data = 8'h20;
         @(posedge clk);
         pop_credit = 0;
-        check_comb();
-        expect1(credit_available === credit_count);
+        #1;
+        expect1(credit_count === 1'b1);
         expect1(credit_available === 1'b1);
+        expect1(push_credit === 1'b0);
+        credit_withhold = 1;
+        #1;
+        expect1(credit_count === 1'b1);
+        expect1(credit_available === 1'b0);
+        expect1(push_credit === 1'b0);
+        credit_withhold = 0;
         push_credit_stall = 0;
-        check_comb();
+        push_valid = 1;
+        push_data = 8'h55;
+        #1;
+        expect1(pop_valid === 1'b1);
+        expect1(pop_data === 8'h55);
         expect1(push_credit === 1'b1);
         @(posedge clk);
-        check_comb();
-        credit_withhold = 1;
-        check_comb();
-        expect1(push_credit === 1'b0);
+        #1;
+        expect1(credit_count === 1'b0);
         expect1(credit_available === 1'b0);
-        credit_withhold = 0;
         push_sender_in_reset = 1;
-        credit_initial = 0;
+        credit_initial = 1;
+        credit_withhold = 1;
+        push_valid = 1;
+        push_data = 8'h5A;
+        #1;
+        expect1(push_receiver_in_reset === 1'b0);
+        expect1(pop_valid === 1'b0);
+        expect1(push_credit === 1'b0);
         @(posedge clk);
-        check_comb();
-        push_sender_in_reset = 0;
-        push_valid = 0;
-        check_comb();
+        #1;
+        expect1(credit_count === 1'b1);
+        expect1(credit_available === 1'b0);
         if (errors == 0) begin
             $display("TESTS PASSED");
         end

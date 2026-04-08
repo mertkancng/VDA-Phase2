@@ -52,9 +52,8 @@ Ajan asagidaki visible problem aileleri icin ozel testbench uretmektedir:
 - `counter`
 - `lfsr`
 - `credit_receiver`
+- `fifo_flops`
 - `cdc_fifo_flops_push_credit`
-
-`fifo_flops` icin ise mevcut durumda guvenli fallback yaklasimi uygulanmistir.
 
 ## 6. Testbench Uretim Stratejisi
 
@@ -85,7 +84,10 @@ Bu problem grubunda dogrudan fonksiyonel esdegerlik kontrolu yapmak mumkun oldug
 - handshake mantigi,
 - reset davranisi,
 - veri gecisi,
-- bazi credit veya buffer davranislari
+- credit veya buffer davranislari,
+- hedefe yonelik mutant ayirici senaryolar
+
+kontrol edilmistir.
 
 kontrol edilmistir. Ancak bu sinifta davranislar daha karmasik oldugu icin secicilik diger problem ailelerine gore daha dusuk kalmistir.
 
@@ -99,14 +101,14 @@ Elde edilen sonuclar:
 - `enc_bin2onehot`: 1 mutant
 - `ecc_sed_encoder`: 1 mutant
 - `shift_left`: 1 mutant
-- `shift_right`: 2 mutant
+- `shift_right`: 1 mutant
 - `lfsr`: 1 mutant
 - `counter`: 1 mutant
-- `credit_receiver`: 9 mutant
-- `cdc_fifo_flops_push_credit`: 26 mutant
-- `fifo_flops`: 31 mutant
+- `credit_receiver`: 1 mutant
+- `fifo_flops`: 1 mutant
+- `cdc_fifo_flops_push_credit`: 18 mutant
 
-Bu sonuclar, kombinasyonel ve acik matematiksel tanimli modullerde yaklasimin basarili oldugunu; buna karsilik daha karmasik stateful ve CDC/FIFO yapilarinda daha gelismis verification mantiklarina ihtiyac oldugunu gostermektedir.
+Bu sonuclar, gorunur problemlerde 10 problemin 9'unda tek dogru implementasyonu secebilen bir testbench uretildigini gostermektedir. En zor kalan alan `cdc_fifo_flops_push_credit` olmus, ancak burada da onceki zayif sonuca gore anlamli bir iyilesme elde edilmistir.
 
 ## 8. Karsilasilan Zorluklar
 
@@ -117,7 +119,7 @@ Bu projede asagidaki zorluklarla karsilasildi:
 - Kisa surede hem genel hem de secici testbench olusturma gereksinimi
 - Karmasik FIFO ve CDC modullerinde dogru tasarimi elemeden mutant eleme dengesini kurmanin zor olmasi
 
-Ozellikle `fifo_flops` ve `cdc_fifo_flops_push_credit` sinifi, daha guclu bir referans model ya da coverage-driven test gerektirmektedir.
+Ozellikle `cdc_fifo_flops_push_credit` sinifi, daha guclu bir referans model ya da coverage-driven test gerektirmektedir.
 
 ## 9. Sinirlar
 

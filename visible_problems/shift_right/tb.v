@@ -66,6 +66,12 @@ module tb;
         compute_expected();
         expect1(out === expected_out);
         expect1(out_valid === 1'b1);
+        in = 50'h0000800000000;
+        fill = 5'h00;
+        shift = 3'd2;
+        #1;
+        compute_expected();
+        expect1(out === expected_out);
         if (errors == 0) begin
             $display("TESTS PASSED");
         end

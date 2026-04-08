@@ -139,12 +139,12 @@ Visible problem behavior observed locally:
 - `enc_bin2onehot`: selective, 1 passing mutant
 - `ecc_sed_encoder`: selective, 1 passing mutant
 - `shift_left`: selective, 1 passing mutant
-- `shift_right`: 2 passing mutants
+- `shift_right`: selective, 1 passing mutant
 - `lfsr`: selective, 1 passing mutant
 - `counter`: selective, 1 passing mutant
-- `credit_receiver`: 9 passing mutants
-- `cdc_fifo_flops_push_credit`: low selectivity
-- `fifo_flops`: fallback / low selectivity
+- `credit_receiver`: selective, 1 passing mutant
+- `fifo_flops`: selective, 1 passing mutant
+- `cdc_fifo_flops_push_credit`: improved, 18 passing mutants
 
 Example output summary is included in:
 
