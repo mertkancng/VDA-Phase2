@@ -32,7 +32,6 @@ module tb;
 
     reg [4:0] model_state;
     reg feedback;
-    integer i;
 
     task check_outputs;
         begin
@@ -58,17 +57,20 @@ module tb;
         rst = 0;
         check_outputs();
         advance = 1;
-        for (i = 0; i < 6; i = i + 1) begin
-            feedback = ^(model_state & taps);
-            @(posedge clk);
-            model_state = {model_state[3:0], feedback};
-            check_outputs();
-        end
+        feedback = ^(model_state & taps);
+        @(posedge clk);
+        model_state = {model_state[3:0], feedback};
+        check_outputs();
+        feedback = ^(model_state & taps);
+        @(posedge clk);
+        model_state = {model_state[3:0], feedback};
+        check_outputs();
         advance = 0;
         @(posedge clk);
         check_outputs();
         reinit = 1;
-        initial_state = 5'b01011;
+        initial_state = 5'b00001;
+        taps = 5'b00000;
         @(posedge clk);
         model_state = initial_state;
         check_outputs();
@@ -78,14 +80,14 @@ module tb;
         @(posedge clk);
         model_state = {model_state[3:0], feedback};
         check_outputs();
-        taps = 5'b11111;
-        advance = 1;
-        for (i = 0; i < 4; i = i + 1) begin
-            feedback = ^(model_state & taps);
-            @(posedge clk);
-            model_state = {model_state[3:0], feedback};
-            check_outputs();
-        end
+        feedback = ^(model_state & taps);
+        @(posedge clk);
+        model_state = {model_state[3:0], feedback};
+        check_outputs();
+        feedback = ^(model_state & taps);
+        @(posedge clk);
+        model_state = {model_state[3:0], feedback};
+        check_outputs();
         if (errors == 0) begin
             $display("TESTS PASSED");
         end

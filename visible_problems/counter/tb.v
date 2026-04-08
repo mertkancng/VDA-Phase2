@@ -34,8 +34,11 @@ module tb;
         end
     endtask
 
-    reg [3:0] expected_value;
-    reg [3:0] expected_next;
+    integer cur;
+    integer initv;
+    integer incv;
+    integer decv;
+    integer expected_next;
 
     function automatic [3:0] wrap11;
         input integer raw;
@@ -48,11 +51,40 @@ module tb;
         end
     endfunction
 
-    task check_outputs;
+    task run_case;
+        input integer cur_in;
+        input integer init_in;
+        input integer reinit_in;
+        input integer incr_valid_in;
+        input integer decr_valid_in;
+        input integer incr_in;
+        input integer decr_in;
         begin
+            rst = 1;
+            initial_value = cur_in[3:0];
+            reinit = 0;
+            incr_valid = 0;
+            decr_valid = 0;
+            incr = 0;
+            decr = 0;
+            @(posedge clk);
+            rst = 0;
+            initial_value = init_in[3:0];
+            reinit = reinit_in;
+            incr_valid = incr_valid_in;
+            decr_valid = decr_valid_in;
+            incr = incr_in[1:0];
+            decr = decr_in[1:0];
+            if (reinit_in)
+                expected_next = init_in;
+            else
+                expected_next = wrap11(cur_in + (incr_valid_in ? incr_in : 0) - (decr_valid_in ? decr_in : 0));
             #1;
-            expect1(value === expected_value);
-            expect1(value_next === expected_next);
+            expect1(value === cur_in[3:0]);
+            expect1(value_next === expected_next[3:0]);
+            @(posedge clk);
+            #1;
+            expect1(value === expected_next[3:0]);
         end
     endtask
 
@@ -61,106 +93,20 @@ module tb;
 
     initial begin
         errors = 0;
-        rst = 1;
-        reinit = 0;
-        incr_valid = 0;
-        decr_valid = 0;
-        initial_value = 4'd7;
-        incr = 2'd0;
-        decr = 2'd0;
-        expected_value = 4'dx;
-        expected_next = 4'd7;
-        @(posedge clk);
-        expected_value = 4'd7;
-        expected_next = 4'd7;
-        check_outputs();
-        rst = 0;
-        incr_valid = 1;
-        incr = 2'd3;
-        expected_next = wrap11(expected_value + incr);
-        check_outputs();
-        @(posedge clk);
-        expected_value = expected_next;
-        expected_next = wrap11(expected_value + incr);
-        check_outputs();
-        decr_valid = 1;
-        decr = 2'd2;
-        expected_next = wrap11(expected_value + incr - decr);
-        check_outputs();
-        @(posedge clk);
-        expected_value = expected_next;
-        expected_next = wrap11(expected_value + incr - decr);
-        check_outputs();
-        incr_valid = 0;
-        expected_next = wrap11(expected_value - decr);
-        check_outputs();
-        @(posedge clk);
-        expected_value = expected_next;
-        expected_next = wrap11(expected_value - decr);
-        check_outputs();
-        decr_valid = 0;
-        reinit = 1;
-        initial_value = 4'd2;
-        incr_valid = 1;
-        incr = 2'd1;
-        expected_next = initial_value;
-        check_outputs();
-        @(posedge clk);
-        expected_value = initial_value;
-        expected_next = initial_value;
-        check_outputs();
-        reinit = 0;
-        initial_value = 4'd9;
-        incr = 2'd3;
-        decr_valid = 0;
-        expected_next = wrap11(expected_value + incr);
-        check_outputs();
-        @(posedge clk);
-        expected_value = expected_next;
-        expected_next = wrap11(expected_value + incr);
-        check_outputs();
-        reinit = 1;
-        initial_value = 4'd9;
-        expected_next = initial_value;
-        check_outputs();
-        @(posedge clk);
-        expected_value = initial_value;
-        expected_next = initial_value;
-        check_outputs();
-        reinit = 0;
-        incr_valid = 1;
-        incr = 2'd3;
-        expected_next = 4'd1;
-        check_outputs();
-        @(posedge clk);
-        expected_value = 4'd1;
-        expected_next = 4'd4;
-        check_outputs();
-        incr_valid = 0;
-        decr_valid = 1;
-        decr = 2'd3;
-        expected_next = wrap11(expected_value - decr);
-        check_outputs();
-        @(posedge clk);
-        expected_value = expected_next;
-        expected_next = wrap11(expected_value - decr);
-        check_outputs();
-        reinit = 1;
-        initial_value = 4'd1;
-        expected_next = initial_value;
-        check_outputs();
-        @(posedge clk);
-        expected_value = 4'd1;
-        expected_next = 4'd1;
-        check_outputs();
-        reinit = 0;
-        decr = 2'd3;
-        expected_next = 4'd9;
-        check_outputs();
-        @(posedge clk);
-        expected_value = 4'd9;
-        expected_next = 4'd6;
-        check_outputs();
+        for (cur = 0; cur <= 10; cur = cur + 1) begin
+            for (initv = 0; initv <= 10; initv = initv + 1) begin
+                run_case(cur, initv, 1, 0, 0, 0, 0);
+                run_case(cur, initv, 1, 1, 1, 3, 2);
+                for (incv = 0; incv < 4; incv = incv + 1) begin
+                    for (decv = 0; decv < 4; decv = decv + 1) begin
+                        run_case(cur, initv, 0, 0, 0, incv, decv);
+                        run_case(cur, initv, 0, 1, 0, incv, decv);
+                        run_case(cur, initv, 0, 0, 1, incv, decv);
+                        run_case(cur, initv, 0, 1, 1, incv, decv);
+                    end
+                end
+            end
+        end
         if (errors == 0) begin
             $display("TESTS PASSED");
         end

@@ -100,9 +100,9 @@ Elde edilen sonuclar:
 - `ecc_sed_encoder`: 1 mutant
 - `shift_left`: 1 mutant
 - `shift_right`: 2 mutant
-- `lfsr`: 2 mutant
-- `counter`: 3 mutant
-- `credit_receiver`: 16 mutant
+- `lfsr`: 1 mutant
+- `counter`: 1 mutant
+- `credit_receiver`: 9 mutant
 - `cdc_fifo_flops_push_credit`: 26 mutant
 - `fifo_flops`: 31 mutant
 

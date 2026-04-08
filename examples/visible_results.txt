@@ -4,13 +4,13 @@ Visible problem local summary
 The following summary was obtained from local `iverilog` + `vvp` mutant scans on visible problems:
 
 - cdc_fifo_flops_push_credit: 26 passing mutants
-- counter: 3 passing mutants
-- credit_receiver: 16 passing mutants
+- counter: 1 passing mutant
+- credit_receiver: 9 passing mutants
 - ecc_sed_encoder: 1 passing mutant
 - enc_bin2gray: 1 passing mutant
 - enc_bin2onehot: 1 passing mutant
 - fifo_flops: 31 passing mutants
-- lfsr: 2 passing mutants
+- lfsr: 1 passing mutant
 - shift_left: 1 passing mutant
 - shift_right: 2 passing mutants
 

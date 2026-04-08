@@ -140,9 +140,9 @@ Visible problem behavior observed locally:
 - `ecc_sed_encoder`: selective, 1 passing mutant
 - `shift_left`: selective, 1 passing mutant
 - `shift_right`: 2 passing mutants
-- `lfsr`: 2 passing mutants
-- `counter`: 3 passing mutants
-- `credit_receiver`: low selectivity
+- `lfsr`: selective, 1 passing mutant
+- `counter`: selective, 1 passing mutant
+- `credit_receiver`: 9 passing mutants
 - `cdc_fifo_flops_push_credit`: low selectivity
 - `fifo_flops`: fallback / low selectivity
 
