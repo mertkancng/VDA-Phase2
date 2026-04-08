@@ -1,8 +1,26 @@
-# GenAI for Design Verification - Phase 2 Submission
+# Google Track Verification Agent
 
-This repository contains our Phase 2 submission for the VLSI Design Automation / GenAI for Design Verification project.
+Team DesignEEErs
 
-The goal is to generate a Verilog testbench from a natural language RTL specification and use that testbench to distinguish the correct RTL implementation from incorrect mutants.
+Codex-based Verilog testbench generation and evaluation for visible Google Track verification problems.
+
+## Team
+
+Team DesignEEErs
+
+This is a group project for Topic 2: AI for Design Verification (Google Track).
+
+### Members
+
+- Arda Suhedar
+- Mertkan Riza Yulu
+
+This repository is the project repository of Team DesignEEErs for Topic 2: AI for Design Verification (Google Track).
+Its purpose is to drive a Codex-based workflow that reads a natural language hardware problem, generates a Verilog testbench, and evaluates that testbench against RTL candidates from the professor-provided benchmark repository.
+
+The benchmark repository is treated as an external dataset.
+This repo should contain the agent workflow, prompts, local experiment artifacts, and notes.
+It should not become a copy of the benchmark itself.
 
 ## Repository Contents
 
