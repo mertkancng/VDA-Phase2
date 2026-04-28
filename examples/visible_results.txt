@@ -3,7 +3,7 @@ Visible problem local summary
 
 The following summary was obtained from local `iverilog` + `vvp` mutant scans on visible problems:
 
-- cdc_fifo_flops_push_credit: 18 passing mutants
+- cdc_fifo_flops_push_credit: 1 passing mutant
 - counter: 1 passing mutant
 - credit_receiver: 1 passing mutant
 - ecc_sed_encoder: 1 passing mutant
@@ -18,4 +18,4 @@ Interpretation:
 
 - Lower number of passing mutants is better.
 - A result of 1 means the generated testbench is highly selective on visible data.
-- `cdc_fifo_flops_push_credit` remains the weakest visible problem, but it improved substantially.
+- The current visible benchmark sweep isolates a single passing mutant in all 10 visible problems.

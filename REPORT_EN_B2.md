@@ -117,11 +117,11 @@ Final visible results:
 - `counter`: 1 passing mutant
 - `credit_receiver`: 1 passing mutant
 - `fifo_flops`: 1 passing mutant
-- `cdc_fifo_flops_push_credit`: 18 passing mutants
+- `cdc_fifo_flops_push_credit`: 1 passing mutant
 
-This means the system isolated one candidate implementation in 9 out of 10 visible problems.
+This means the system isolated one candidate implementation in all 10 visible problems.
 
-The weakest case was `cdc_fifo_flops_push_credit`. Even so, this module improved a lot compared to the earlier version of the solution.
+The most difficult case during development was `cdc_fifo_flops_push_credit`, but the final version also isolates one visible mutant for this module.
 
 ## 8. Challenges
 
@@ -161,6 +161,6 @@ In future work, combining rule-based generation with stronger AI reasoning could
 
 This project produced a working testbench-generation agent for the provided Phase 2 framework. The system reads the problem files, identifies the module family, and returns a complete Verilog testbench that is compatible with the given harness.
 
-The final result is strong on combinational and many sequential problems. It also improved difficult protocol-based problems such as `credit_receiver` and `fifo_flops`. The only remaining weak case is `cdc_fifo_flops_push_credit`, which still needs a stronger CDC-aware reference strategy.
+The final result is strong on combinational, sequential, and protocol-based visible problems. It also handles the difficult CDC FIFO case on the visible benchmark with a single passing mutant.
 
 Overall, the submission provides a complete, automated, and reproducible Phase 2 solution.

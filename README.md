@@ -162,7 +162,7 @@ Visible problem behavior observed locally:
 - `counter`: selective, 1 passing mutant
 - `credit_receiver`: selective, 1 passing mutant
 - `fifo_flops`: selective, 1 passing mutant
-- `cdc_fifo_flops_push_credit`: improved, 18 passing mutants
+- `cdc_fifo_flops_push_credit`: 1 passing mutant
 
 Example output summary is included in:
 
